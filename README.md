@@ -4,6 +4,12 @@ A simple encryption module to encrypt and decrypt strings with a public/private 
 
 Can also generate an RSA key pair
 
+## Requirements
+This module requires pycryptodome
+```
+pip3 install pycryptodome
+```
+
 ## Generate RSA Key Pair
 
 ```
