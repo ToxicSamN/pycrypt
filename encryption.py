@@ -21,6 +21,10 @@ class Encryption(object):
     but shouldn't have to tell you ... never use the default outside of development.
     """
 
+    def __init__(self):
+        self.__encrypted_message = None
+        self.__decrypted_message = None
+
     def encrypt(self, privateData, publickey_file, output_file=None):
 
         if type(privateData) is str:
@@ -30,13 +34,14 @@ class Encryption(object):
         cipher_rsa = PKCS1_OAEP.new(pubkey)
         encrypted_message = cipher_rsa.encrypt(privateData)
 
-        setattr(self, 'encrypted_message', base64.b64encode(encrypted_message))
+        self.__encrypted_message = base64.b64encode(encrypted_message)
         if output_file:
             with open(output_file, 'wb') as f:
-                f.write(self.encrypted_message)
+                f.write(self.__encrypted_message)
                 f.close
 
-        return self
+    def get_encrypted_message(self):
+        return self.__encrypted_message
 
     def decrypt(self, private_key_file, encrypted_data, secret_code=None):
 
@@ -44,6 +49,9 @@ class Encryption(object):
             with open(encrypted_data, 'rb') as f:
                 encrypted_data = f.read()
                 f.close()
+        if isinstance(secret_code, str):
+            # encode this to a bytes object
+            secret_code = secret_code.encode('utf-8')
 
         if secret_code:
             private_key = RSA.import_key(open(private_key_file, 'rb').read(), passphrase=secret_code)
@@ -54,18 +62,11 @@ class Encryption(object):
         cipher_rsa = PKCS1_OAEP.new(private_key)
         privateData = cipher_rsa.decrypt(encrypted_data)
 
-        setattr(self, 'decrypted_message', str(privateData, "utf-8"))
-        chk = None
-        try:
-            chk = getattr(self, 'encrypted_message')
-        except:
-            chk = None
-            pass
+        self.__decrypted_message = str(privateData, "utf-8")
+        self.__encrypted_message = None
 
-        if chk:
-            delattr(self, 'encrypted_message')
-
-        return self
+    def get_decrypted_message(self):
+        return self.__decrypted_message
 
     def generate_rsa_key_pair(self, public_file=None, private_file=None,
                               secret_code=b'N-6NZG\xff<\xddL\x85:\xc5\xc4\xa8n'):
