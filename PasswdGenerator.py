@@ -18,7 +18,7 @@ class PasswordGenerator:
                  public_key='/u01/prd/rsa/local_pub', output_file=None):
         self.pw_size = size
         self.excluded_chars += excluded_chars
-        while len(self.__passwd) <= self.pw_size:
+        while len(self.__passwd) < self.pw_size:
             c = random.choice(self.CHARS)
             if not self.excluded_chars.__contains__(c):
                 self.__passwd += ''.join(c)
