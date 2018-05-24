@@ -34,6 +34,7 @@ class Encryption(object):
         cipher_rsa = PKCS1_OAEP.new(pubkey)
         encrypted_message = cipher_rsa.encrypt(privateData)
 
+        self.__decrypted_message = None
         self.__encrypted_message = base64.b64encode(encrypted_message)
         if output_file:
             with open(output_file, 'wb') as f:
