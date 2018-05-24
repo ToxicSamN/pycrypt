@@ -3,10 +3,11 @@ import string
 import random
 from .encryption import Encryption
 
+
 class PasswordGenerator:
 
-    CHARS = string.ascii_letters + string.digits + string.punctuation
-	ALPHANUMERIC = string.ascii_letters + string.digits
+    CHARS = chars = string.ascii_letters + string.digits + string.punctuation
+    ALPHANUMERIC = string.ascii_letters + string.digits
 
     def __init__(self):
         self.pw_size = 8
@@ -20,10 +21,10 @@ class PasswordGenerator:
         self.pw_size = size
         self.excluded_chars += excluded_chars
         while len(self.__passwd) < self.pw_size:
-			if AlphaNumeric:
-				c = random,choice(self.ALPHANUMERIC)
-			else
-				c = random.choice(self.CHARS)
+            if AlphaNumeric:
+                c = random.choice(self.ALPHANUMERIC)
+            else:
+                c = random.choice(self.CHARS)
             if not self.excluded_chars.__contains__(c):
                 self.__passwd += ''.join(c)
         self.__dpasswd = self.__passwd
