@@ -75,7 +75,7 @@ class Encryption(object):
         key = RSA.generate(4096)
 
         private, public = key.exportKey(passphrase=secret_code, pkcs=8,
-                                        protection="scryptAndAES128-CBC"), key.publickey().exportKey()
+                                        protection="scryptAndAES256-CBC"), key.publickey().exportKey()
 
         with open(private_file, 'wb') as f:
             f.write(private)
