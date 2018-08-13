@@ -10,6 +10,11 @@ This module requires pycryptodome
 pip3 install pycryptodome
 ```
 
+## Installation
+```
+python setup.py install
+```
+
 ## Generate RSA Key Pair
 
 ```
