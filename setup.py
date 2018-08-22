@@ -7,7 +7,7 @@ with open('requirements.txt') as f:
 
 setup(
     name='pycrypt',
-    version='1.0.0',
+    version='1.0.1',
     description='Customized Encryption module',
     license='Apache',
     packages=['pycrypt'],

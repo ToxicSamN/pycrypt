@@ -2,8 +2,11 @@
 import os
 import platform
 import base64
+import hashlib
+from Crypto import Random
 from Crypto.PublicKey import RSA
 from Crypto.Cipher import AES, PKCS1_OAEP
+
 
 # MUST USE PYTHON 3.5+
 
@@ -12,6 +15,26 @@ class MD5:
     def __init__(self, hxstr, btstr):
         self.HexString = hxstr
         self.ByteString = btstr
+
+
+class AESCipher(object):
+
+    def __init__(self):
+        self.AES_BLOCK_SIZE = AES.block_size
+        self.AES_KEY = hashlib.sha256(Random.new().read(32)).digest()
+
+    def encrypt(self, raw):
+        iv = Random.new().read(self.AES_BLOCK_SIZE)
+        cipher = AES.new(self.AES_KEY, AES.MODE_CFB, iv)
+        return base64.b64encode(iv + cipher.encrypt(raw))
+
+    def decrypt(self, enc, key=None):
+        if key:
+            self.AES_KEY = key
+        enc = base64.b64decode(enc)
+        iv = enc[:self.AES_BLOCK_SIZE]
+        cipher = AES.new(self.AES_KEY, AES.MODE_CFB, iv)
+        return cipher.decrypt(enc[self.AES_BLOCK_SIZE:]).decode('utf-8')
 
 
 class Encryption(object):
