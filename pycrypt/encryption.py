@@ -4,6 +4,7 @@ import platform
 import base64
 import hashlib
 import random
+from pycrypt.pkcs7 import PKCS7Encoder
 from Crypto import Random
 from Crypto.PublicKey import RSA
 from Crypto.Cipher import AES, PKCS1_OAEP
@@ -50,25 +51,44 @@ class MD5:
 
 
 class AESCipher(object):
-
+    """
+        Custom class for creating a AES Cipher for encryption/decryption processing
+        By default this uses AES Cipher Mode CFB. this is built for specific purpose and not
+        designed to be used with all AES Cipher Modes.
+    """
     def __init__(self):
         self.AES_BLOCK_SIZE = AES.block_size
-        self.AES_KEY = hashlib.sha256(_get_random_unicode(32).encode('utf-8')).digest()
+        self.AES_KEY = Random.get_random_bytes(32)
+        self.padding = PKCS7Encoder()
+        self.decrypted_bytes = None
+        self.decrypted_data = None
 
-    def encrypt(self, raw):
+    def encrypt(self, raw, *args, **kwargs):
         if isinstance(raw, str):
-            raw = raw.encode('utf-8')
-        iv = Random.new().read(self.AES_BLOCK_SIZE)
-        cipher = AES.new(self.AES_KEY, AES.MODE_CFB, iv)
-        return base64.b64encode(iv + cipher.encrypt(raw))
+            tmp = self.padding.encode(raw).encode('utf')
+        else:
+            raise ValueError("data to be encrypted is not in 'str' form")
 
-    def decrypt(self, enc, key=None):
+        kwargs['iv'] = Random.get_random_bytes(self.AES_BLOCK_SIZE)
+        cipher = AES.new(key=self.AES_KEY,
+                         mode=AES.MODE_CFB,
+                         *args,
+                         **kwargs)
+        ciphertext = cipher.encrypt(tmp)
+        return base64.b64encode(kwargs['iv'] + ciphertext)
+
+    def decrypt(self, enc, key, *args, **kwargs):
         if key:
-            self.AES_KEY = key
+            if isinstance(key, str):
+                self.AES_KEY = base64.b64decode(key)
+            else:
+                self.AES_KEY = key
         enc = base64.b64decode(enc)
-        iv = enc[:self.AES_BLOCK_SIZE]
-        cipher = AES.new(self.AES_KEY, AES.MODE_CFB, iv)
-        return cipher.decrypt(enc[self.AES_BLOCK_SIZE:]).decode('utf-8')
+        kwargs['iv'] = enc[:self.AES_BLOCK_SIZE]
+        cipher = AES.new(self.AES_KEY, AES.MODE_CFB, *args, **kwargs)
+        self.decrypted_bytes = cipher.decrypt(enc[self.AES_BLOCK_SIZE:])
+        ciphertext = self.padding.get_text(self.decrypted_bytes)
+        return self.padding.decode(ciphertext)
 
 
 class Encryption(object):
