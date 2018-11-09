@@ -6,13 +6,13 @@ from urllib3.exceptions import InsecureRequestWarning
 from pycrypt.encryption import Encryption, AESCipher
 
 
-URI='https://credstore/credentialstore/GetCredential?ClientId={}&username={}'
+URI = 'https://credstore/credentialstore/GetCredential?ClientId={}&username={}'
 DEV_URI = 'https://credstore-dev/credentialstore/GetCredential?ClientId={}&username={}'
 
 
 class Credential:
 
-    def __init__(self, username, credstore_uri=URI):
+    def __init__(self, username):
         self.username = username
         self.session = requests.Session()
         self.session.verify = False
@@ -46,6 +46,8 @@ class Credential:
                 'username': self.username,
                 'password': self.__password
             }
+        else:
+            return self
 
     def decipher(self, shared_key, password):
         aes_cipher = AESCipher()

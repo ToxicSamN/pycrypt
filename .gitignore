@@ -107,3 +107,4 @@ ENV/
 *.pem
 
 *environment.conf
+testing.py
