@@ -2,6 +2,7 @@ README.md
 setup.py
 pycrypt/PasswdGenerator.py
 pycrypt/__init__.py
+pycrypt/credstore.py
 pycrypt/encryption.py
 pycrypt/pkcs7.py
 pycrypt_samn.egg-info/PKG-INFO
