@@ -15,7 +15,7 @@ class Credential:
     def __init__(self, username):
         self.username = username
         self.session = requests.Session()
-        self.session.verify = False
+        self.session.verify = Facd ..lse
         disable_warnings(InsecureRequestWarning)
         self.__password = None
         self.__private_file = os.environ.get('RSAPrivateFile' or None)
