@@ -13,6 +13,7 @@ idea/
 # Distribution / packaging
 .Python
 env/
+build/
 develop-eggs/
 downloads/
 eggs/
@@ -106,5 +107,12 @@ ENV/
 *.p7b
 *.pem
 
+# dev stuff:
 *environment.conf
+credstore_notes.txt
+*testing.py
 testing.py
+*pypi_pack_n_send.py
+pypi_pack_n_send.py
+*venv_pip_upgrades.py
+venv_pip_upgrades.py
