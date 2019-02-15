@@ -9,9 +9,9 @@ with open('requirements.txt', 'r') as file:
 
 # Let's pull out the packages in the requirements file to upgrade
 if isinstance(requirements, list):
-    packages = [p.split('==')[0] for p in requirements]
+    packages = [p.split('>=')[0] for p in requirements]
 elif isinstance(requirements, str):
-    packages = [requirements.split('==')[0]]
+    packages = [requirements.split('>=')[0]]
 
 if platform.platform().lower().find('windiows'):
     venv_cmd = os.path.join(os.getcwd(), "venv\\Scripts\\activate")
@@ -39,7 +39,7 @@ elif isinstance(requirements, str):
 out_packages = []
 for package in new_packages:
     if package:
-        name, version = package.split("==")
+        name, version = package.split(">=")
         if name in packages:
             out_packages.append(package)
 
