@@ -13,7 +13,7 @@ if isinstance(requirements, list):
 elif isinstance(requirements, str):
     packages = [requirements.split('>=')[0]]
 
-if platform.platform().lower().find('windiows'):
+if platform.platform().lower().find('windows'):
     venv_cmd = os.path.join(os.getcwd(), "venv\\Scripts\\activate")
 elif platform.platform().lower().find('linux'):
     venv_cmd = "source {}".format(os.path.join(os.getcwd(), "venv/bin/activate"))
