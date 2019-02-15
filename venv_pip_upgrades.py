@@ -7,7 +7,7 @@ with open('requirements.txt', 'r') as file:
     requirements = file.read().split("\n")
     file.close()
 
-# Let's pul out the packages in the requirements file to upgrade
+# Let's pull out the packages in the requirements file to upgrade
 if isinstance(requirements, list):
     packages = [p.split('==')[0] for p in requirements]
 elif isinstance(requirements, str):
