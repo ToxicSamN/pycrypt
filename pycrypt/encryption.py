@@ -4,6 +4,7 @@ import platform
 import base64
 import hashlib
 import random
+import Crypto.Hash.SHA256
 from pycrypt.pkcs7 import PKCS7Encoder
 from Crypto import Random
 from Crypto.PublicKey import RSA
@@ -102,13 +103,17 @@ class Encryption(object):
         self.__encrypted_message = None
         self.__decrypted_message = None
 
-    def encrypt(self, privateData, publickey_file, output_file=None):
+    def encrypt(self, privateData, publickey_file, label=b'', output_file=None):
 
         if type(privateData) is str:
             privateData = privateData.encode("utf-8")
 
         pubkey = RSA.import_key(open(publickey_file, 'r').read())
-        cipher_rsa = PKCS1_OAEP.new(pubkey)
+        #  random byte generator and good cryptography source for blinding the RSA operation
+        rng = os.urandom
+        # establish a new cipher using SHA256 as the hashing algorithm
+        cipher_rsa = PKCS1_OAEP.new(key=pubkey, hashAlgo=Crypto.Hash.SHA256, label=label, randfunc=rng)
+
         encrypted_message = cipher_rsa.encrypt(privateData)
 
         self.__decrypted_message = None
@@ -116,12 +121,11 @@ class Encryption(object):
         if output_file:
             with open(output_file, 'wb') as f:
                 f.write(self.__encrypted_message)
-                f.close
 
     def get_encrypted_message(self):
         return self.__encrypted_message
 
-    def decrypt(self, encrypted_data, private_key_file, secret_code=None):
+    def decrypt(self, encrypted_data, private_key_file, label=b'', secret_code=None):
 
         if os.path.isfile(encrypted_data):
             with open(encrypted_data, 'rb') as f:
@@ -137,8 +141,17 @@ class Encryption(object):
             private_key = RSA.import_key(open(private_key_file, 'rb').read())
 
         encrypted_data = base64.b64decode(encrypted_data)
-        cipher_rsa = PKCS1_OAEP.new(private_key)
-        privateData = cipher_rsa.decrypt(encrypted_data)
+        #  random byte generator and good cryptography source for blinding the RSA operation
+        rng = os.urandom
+        cipher_rsa = PKCS1_OAEP.new(private_key, hashAlgo=Crypto.Hash.SHA256, label=label, randfunc=rng)
+
+        # TODO: This is a stop-gap measure in order to decrypt older encrypted values with default SHA1 hashAlgo
+        try:
+            privateData = cipher_rsa.decrypt(encrypted_data)
+        except ValueError as e:
+            # encryption performed by SHA1 hashing algorithm
+            cipher_rsa = PKCS1_OAEP.new(private_key, hashAlgo=Crypto.Hash.SHA1, label=label, randfunc=rng)
+            privateData = cipher_rsa.decrypt(encrypted_data)
 
         self.__decrypted_message = privateData
         self.__encrypted_message = None

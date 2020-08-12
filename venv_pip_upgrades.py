@@ -13,9 +13,9 @@ if isinstance(requirements, list):
 elif isinstance(requirements, str):
     packages = [requirements.split('>=')[0]]
 
-if platform.platform().lower().find('windows'):
+if not platform.platform().lower().find('windows') == -1:
     venv_cmd = os.path.join(os.getcwd(), "venv\\Scripts\\activate")
-elif platform.platform().lower().find('linux'):
+elif not platform.platform().lower().find('linux') or not platform.platform().lower().find('macos'):
     venv_cmd = "source {}".format(os.path.join(os.getcwd(), "venv/bin/activate"))
 
 pip_cmd = "pip install --upgrade --no-cache-dir " + ' '.join(packages)
