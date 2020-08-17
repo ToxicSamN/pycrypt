@@ -54,7 +54,7 @@ class MD5:
 class AESCipher(object):
     """
         Custom class for creating a AES Cipher for encryption/decryption processing
-        By default this uses AES Cipher Mode CFB. this is built for specific purpose and not
+        By default this uses AES Cipher Mode CFB128. this is built for specific purpose and not
         designed to be used with all AES Cipher Modes.
     """
     def __init__(self):
@@ -73,6 +73,7 @@ class AESCipher(object):
         kwargs['iv'] = Random.get_random_bytes(self.AES_BLOCK_SIZE)
         cipher = AES.new(key=self.AES_KEY,
                          mode=AES.MODE_CFB,
+                         segment_size=128,
                          *args,
                          **kwargs)
         ciphertext = cipher.encrypt(tmp)
@@ -86,7 +87,11 @@ class AESCipher(object):
                 self.AES_KEY = key
         enc = base64.b64decode(enc)
         kwargs['iv'] = enc[:self.AES_BLOCK_SIZE]
-        cipher = AES.new(self.AES_KEY, AES.MODE_CFB, *args, **kwargs)
+        cipher = AES.new(key=self.AES_KEY,
+                         mode=AES.MODE_CFB,
+                         segment_size=128,
+                         *args,
+                         **kwargs)
         self.decrypted_bytes = cipher.decrypt(enc[self.AES_BLOCK_SIZE:])
         ciphertext = self.padding.get_text(self.decrypted_bytes)
         return self.padding.decode(ciphertext)

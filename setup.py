@@ -8,7 +8,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name='pycrypt-samn',
-    version='1.3.1',
+    version='1.3.2',
     description='Customized Encryption module',
     long_description_content_type='text/markdown',
 	long_description=long_description,
